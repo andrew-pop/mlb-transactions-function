@@ -1,0 +1,139 @@
+library(tidyverse)
+library(rvest)
+library(janitor)
+
+transaction_fn = function(year, month) {
+  
+  library(tidyverse)
+  library(rvest)
+  library(janitor)
+  
+  yr = year
+  
+  mn = month
+  
+  url1 = paste0("https://www.mlb.com/transactions/", yr, "/", mn,"/")
+  
+  most <- c('01', '02', '03', '04', '05', '06', '07', '08', '09', 10:31)
+  midd <- c('01', '02', '03', '04', '05', '06', '07', '08', '09', 10:30)
+  feb <-  c('01', '02', '03', '04', '05', '06', '07', '08', '09', 10:28)
+  
+  #numbs <- ifelse(month %in% c('01', '03', '05', '07', '08', '10', '12'),)
+  
+  numbs <- if(month %in% c('01', '03', '05', '07', '08', '10', '12')) {
+    most
+  } else if(month %in% c('02')) {
+    feb
+  } else {
+    midd
+  }
+  
+  transactions <- data.frame()
+  
+  for(i in numbs){
+    
+    #p-1
+    
+    url <- paste0(url1,i,sep = '')
+    
+    dat <- url %>%
+      read_html() %>%
+      html_nodes(xpath='//*[@id="transactions"]/div[1]/table') %>%
+      html_table()
+    
+    dat <- dat[1]%>% 
+      as.data.frame() %>% 
+      #mutate( #X3 = str_replace(X3, '\n                                                        \n                                                    ', ' ')) %>%
+      row_to_names(row_number = 1)
+    
+    transactions <- rbind(transactions, dat)
+    
+    #p-2
+    
+    url <- paste0(url1,i, '/p-2', sep = '')
+    
+    dat <- url %>%
+      read_html() %>%
+      html_nodes(xpath='//*[@id="transactions"]/div[1]/table') %>%
+      html_table()
+    
+    dat <- dat[1]%>% 
+      as.data.frame() %>% 
+      #mutate( X3 = str_replace(X3, '\n                                                        \n                                                    ', ' ')) %>%
+      row_to_names(row_number = 1)
+    
+    transactions <- rbind(transactions, dat)
+    
+    #p-3
+    
+    url <- paste0(url1,i, '/p-3', sep = '')
+    
+    dat <- url %>%
+      read_html() %>%
+      html_nodes(xpath='//*[@id="transactions"]/div[1]/table') %>%
+      html_table()
+    
+    dat <- dat[1]%>% 
+      as.data.frame() %>% 
+      #mutate( X3 = str_replace(X3, '\n                                                        \n                                                    ', ' ')) %>%
+      row_to_names(row_number = 1)
+    
+    transactions <- rbind(transactions, dat)
+    
+    #p-4
+    
+    url <- paste0(url1,i, '/p-4', sep = '')
+    
+    dat <- url %>%
+      read_html() %>%
+      html_nodes(xpath='//*[@id="transactions"]/div[1]/table') %>%
+      html_table()
+    
+    dat <- dat[1]%>% 
+      as.data.frame() %>% 
+      #mutate( X3 = str_replace(X3, '\n                                                        \n                                                    ', ' ')) %>%
+      row_to_names(row_number = 1)
+    
+    transactions <- rbind(transactions, dat)
+    
+    #p-5
+    
+    url <- paste0(url1,i, '/p-5', sep = '')
+    
+    dat <- url %>%
+      read_html() %>%
+      html_nodes(xpath='//*[@id="transactions"]/div[1]/table') %>%
+      html_table()
+    
+    dat <- dat[1]%>% 
+      as.data.frame() %>% 
+      #mutate( X3 = str_replace(X3, '\n                                                        \n                                                    ', ' ')) %>%
+      row_to_names(row_number = 1)
+    
+    transactions <- rbind(transactions, dat)
+    
+    #p-6
+    
+    url <- paste0(url1,i, '/p-6', sep = '')
+    
+    dat <- url %>%
+      read_html() %>%
+      html_nodes(xpath='//*[@id="transactions"]/div[1]/table') %>%
+      html_table()
+    
+    dat <- dat[1]%>% 
+      as.data.frame() %>% 
+      #mutate( X3 = str_replace(X3, '\n                                                        \n                                                    ', ' ')) %>%
+      row_to_names(row_number = 1)
+    
+    transactions <- rbind(transactions, dat)
+    
+  }
+  
+  trans <- data.frame()
+  
+  trans <- rbind(trans, transactions)
+  
+  return(trans)
+  
+}
