@@ -154,7 +154,7 @@ min_fa <- min_fa %>%
          year = substr(Date, 7,8),
          year = as.numeric(year) + 2000) %>%
   mutate(date = as.Date(paste(year, month, day, sep = '-'))) %>%
-  select(date, month, transaction
+  select(date, month, transaction)
 
 minors <- min_fa %>%
   filter(str_detect(transaction, 'to a minor league')) %>% 
