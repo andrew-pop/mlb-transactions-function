@@ -137,3 +137,8 @@ transaction_fn = function(year, month) {
   return(trans)
   
 }
+
+transactions %>% 
+  mutate( Transaction = str_replace(Transaction, '\n                                                        \n                                                    ', ' ')) %>% 
+  distinct(Date, Transaction) %>%
+  mutate(Transaction = substr(Transaction, start = 9, stop = 1000000L))
