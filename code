@@ -138,13 +138,16 @@ transaction_fn = function(year, month) {
   
 }
 
+transactions <- transaction_fn('2022', '12')
+
 min_fa <- transactions %>% 
   mutate( Transaction = str_replace(Transaction, '\n                                                        \n                                                    ', ' ')) %>% 
   distinct(Date, Transaction) %>%
-  mutate(Transaction = substr(Transaction, start = 9, stop = 1000000L),
-         Transaction = str_trim(Transaction, "left"))
-         
+  mutate(Transaction = substr(Transaction, start = 9, stop = 1000000L))
+
 names(min_fa) <- c('Date', 'transaction')                       
+
+#### lets extract the minor league free agents
 
 min_fa <- min_fa %>% 
   mutate(Date = ifelse(Date  %in% c(' ', ''), NA, Date)) %>%
@@ -152,26 +155,24 @@ min_fa <- min_fa %>%
   mutate(month = substr(Date, 1, 2),
          day = substr(Date, 4,5),
          year = substr(Date, 7,8),
-         year = as.numeric(year) + 2000) %>%
+         year = as.numeric(year) + 2000,
+         transaction = str_trim(transaction, "left")) %>%
   mutate(date = as.Date(paste(year, month, day, sep = '-'))) %>%
   select(date, month, transaction)
-
+         
 minors <- min_fa %>%
   filter(str_detect(transaction, 'to a minor league')) %>% 
   mutate(team = sub("\\ signed.*", "", transaction),
          player_name = gsub(".*free agent (.+) to a.*", "\\1", transaction),
          player_name = str_replace(player_name, "\\s", "|")) %>%
   separate(player_name , into = c('Pos', 'player_name'), sep = "\\|")
-
+         
 minors$team <- str_replace(minors$team, 'Cleveland Indians','Cleveland Guardians') ### for any transactions outside of the 2022 season
-
-positions <- c("RHP","LHP","LF","3B","C","CF","2B","OF","SS","P","1B","RF","IF","DH")
-
+         
 minors <- minors %>%
   mutate(player_name = ifelse(Pos %in% positions, player_name, paste(Pos, player_name, sep = ' ')),
-         Pos = ifelse(Pos %in% positions, Pos, 'No Position'))
-
+           Pos = ifelse(Pos %in% positions, Pos, 'No Position'))
+          
 minors %>% 
-  filter(date != '2023-01-15') %>%
   count(team) %>% 
   arrange(desc(n))
