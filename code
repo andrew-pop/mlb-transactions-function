@@ -165,6 +165,8 @@ minors <- min_fa %>%
 
 minors$team <- str_replace(minors$team, 'Cleveland Indians','Cleveland Guardians') ### for any transactions outside of the 2022 season
 
+positions <- c("RHP","LHP","LF","3B","C","CF","2B","OF","SS","P","1B","RF","IF","DH")
+
 minors <- minors %>%
   mutate(player_name = ifelse(Pos %in% positions, player_name, paste(Pos, player_name, sep = ' ')),
          Pos = ifelse(Pos %in% positions, Pos, 'No Position'))
